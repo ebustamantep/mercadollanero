@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MercadoLlanero — El campo vende directo al campo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    box-sizing:border-box;
+    --bg:#E8DFC7;
+    --bg-alt:#DED2AC;
+    --panel:#F1E9D2;
+    --ink:#2B2013;
+    --ink-soft:#5C4E36;
+    --ember:#A8431C;
+    --ember-deep:#7E3115;
+    --green:#3F5C36;
+    --gold:#BE8A2B;
+    --line:#C7B98D;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg:#1B140C;
+      --bg-alt:#241C11;
+      --panel:#2A2013;
+      --ink:#EDE3C8;
+      --ink-soft:#C9B98F;
+      --ember:#D9713F;
+      --ember-deep:#E8935F;
+      --green:#7FA06D;
+      --gold:#D9A63E;
+      --line:#4A3D25;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1B140C;
+    --bg-alt:#241C11;
+    --panel:#2A2013;
+    --ink:#EDE3C8;
+    --ink-soft:#C9B98F;
+    --ember:#D9713F;
+    --ember-deep:#E8935F;
+    --green:#7FA06D;
+    --gold:#D9A63E;
+    --line:#4A3D25;
+  }
+  html{scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px);}
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Zilla Slab', serif;
+    margin:0 0 0.4em 0;
+    font-weight:600;
+    line-height:1.12;
+  }
+  p{margin:0 0 1em 0; max-width:62ch; color:var(--ink-soft);}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+  section{padding:88px 0;}
+  .section-alt{background:var(--bg-alt);}
+
+  /* Nav */
+  header{
+    position:sticky; top:0; z-index:20;
+    top:env(safe-area-inset-top,0px);
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:16px; padding-bottom:16px;
+  }
+  .brand{
+    font-family:'Zilla Slab', serif;
+    font-weight:700;
+    font-size:1.28rem;
+    letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand svg{width:26px; height:26px; flex:none;}
+  .navlinks{display:flex; gap:28px; font-size:0.95rem;}
+  .navlinks a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px;}
+  .navlinks a:hover{color:var(--ink); border-color:var(--ember);}
+  .nav-cta{
+    font-size:0.92rem; padding:9px 18px; border-radius:2px;
+    background:var(--ember); color:#F4ECD8; text-decoration:none;
+    border:1px solid var(--ember-deep);
+  }
+  @media (max-width:720px){ .navlinks{display:none;} }
+
+  /* Hero */
+  .hero{
+    padding:64px 0 40px;
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:40px; align-items:center;
+  }
+  @media (max-width:860px){ .hero{grid-template-columns:1fr; padding-top:36px;} }
+  .hero h1{
+    font-size:clamp(2.3rem, 4.4vw, 3.6rem);
+    max-width:14ch;
+  }
+  .hero .lede{font-size:1.12rem; max-width:46ch;}
+  .cta-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:28px;}
+  .btn{
+    display:inline-block; text-decoration:none; font-size:0.98rem; font-weight:500;
+    padding:14px 24px; border-radius:2px; border:1px solid transparent;
+  }
+  .btn-primary{background:var(--ember); color:#F4ECD8; border-color:var(--ember-deep);}
+  .btn-secondary{color:var(--ink); border-color:var(--ink); background:transparent;}
+  .btn-secondary:hover{background:var(--panel);}
+
+  .hero-scene{width:100%; height:auto;}
+  .grain{opacity:0.55;}
+
+  /* stamp reveal */
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(2.6) rotate(-8deg); filter:blur(2px);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-2deg); filter:blur(0);}
+  }
+  .mark{
+    animation:stampIn 900ms cubic-bezier(.2,.8,.2,1) both;
+  }
+  @media (prefers-reduced-motion: reduce){ .mark{animation:none;} }
+
+  /* Pillars */
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:44px; margin-top:44px;}
+  @media (max-width:820px){ .pillars{grid-template-columns:1fr;} }
+  .pillar svg{width:34px; height:34px; margin-bottom:14px;}
+  .pillar h3{font-size:1.28rem;}
+
+  /* Eyebrow-free section headers */
+  .section-head{max-width:56ch; margin-bottom:8px;}
+  .section-head h2{font-size:clamp(1.7rem, 3vw, 2.3rem);}
+
+  /* Modules layout: asymmetric, not identical cards */
+  .modules{margin-top:44px; display:grid; grid-template-columns:1.4fr 1fr; gap:26px;}
+  @media (max-width:900px){ .modules{grid-template-columns:1fr;} }
+  .module-feature{
+    background:var(--panel); border:1px solid var(--line); border-radius:3px;
+    padding:36px; display:flex; flex-direction:column; justify-content:space-between; gap:20px;
+  }
+  .module-side{display:flex; flex-direction:column; gap:26px;}
+  .module-mini{
+    border-left:3px solid var(--green); padding-left:18px;
+  }
+  .module-mini h3{font-size:1.12rem; margin-bottom:4px;}
+  .module-mini p{margin:0; font-size:0.95rem;}
+  .tag-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .tag{
+    font-size:0.78rem; padding:4px 10px; border:1px solid var(--line); border-radius:2px; color:var(--ink-soft);
+  }
+
+  /* Tienda agroinsumos */
+  .shop-tabs{display:flex; gap:10px; flex-wrap:wrap; margin:30px 0 28px;}
+  .shop-tab{
+    font-size:0.86rem; padding:8px 16px; border-radius:2px; border:1px solid var(--line);
+    color:var(--ink-soft); background:transparent; cursor:default;
+  }
+  .shop-tab.is-active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .shop-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  @media (max-width:980px){ .shop-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .shop-grid{grid-template-columns:1fr;} }
+  .product{
+    background:var(--panel); border:1px solid var(--line); border-radius:2px;
+    padding:18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .product .cat{font-size:0.74rem; color:var(--green); font-weight:500;}
+  .product h3{font-family:'Work Sans', sans-serif; font-weight:600; font-size:1rem; margin:0;}
+  .product .seller{font-size:0.82rem; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+  .product .seller svg{width:13px; height:13px; flex:none;}
+  .product .price-row{display:flex; align-items:baseline; justify-content:space-between; margin-top:auto; padding-top:6px;}
+  .product .price{font-family:'Zilla Slab', serif; font-weight:600; font-size:1.15rem;}
+  .product .unit{font-size:0.76rem; color:var(--ink-soft);}
+  .product .lic{font-size:0.74rem; color:var(--ember); border-top:1px dashed var(--line); padding-top:8px; margin-top:2px;}
+  .add-btn{
+    margin-top:8px; width:100%; padding:9px; border-radius:2px; border:1px solid var(--ink);
+    background:transparent; color:var(--ink); font-family:'Work Sans',sans-serif; font-size:0.88rem; cursor:pointer;
+  }
+  .add-btn:hover{background:var(--ink); color:var(--bg);}
+
+  /* Ficha técnica document */
+  .ficha{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:26px 26px 22px;
+    font-size:0.92rem;
+  }
+  .ficha-top{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px dashed var(--line); padding-bottom:12px; margin-bottom:14px;}
+  .ficha-top .id{font-family:'Zilla Slab', serif; font-weight:600; font-size:1.05rem;}
+  .ficha-top .lot{color:var(--ink-soft); font-size:0.85rem;}
+  .ficha dl{display:grid; grid-template-columns:auto 1fr; gap:6px 14px; margin:0;}
+  .ficha dt{color:var(--ink-soft); font-size:0.82rem;}
+  .ficha dd{margin:0; font-weight:500;}
+  .seal{
+    position:absolute; top:20px; right:22px; width:58px; height:58px; opacity:0.9;
+  }
+
+  /* Flow (sequence) */
+  .flow{margin-top:56px; position:relative;}
+  .flow-line{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative;
+  }
+  .flow-line::before{
+    content:""; position:absolute; top:22px; left:5%; right:5%; height:2px; background:var(--line);
+  }
+  @media (max-width:900px){
+    .flow-line{grid-template-columns:1fr; gap:34px;}
+    .flow-line::before{display:none;}
+  }
+  .flow-step{position:relative; padding-right:16px;}
+  .flow-num{
+    width:44px; height:44px; border-radius:50%; background:var(--ember); color:#F4ECD8;
+    display:flex; align-items:center; justify-content:center; font-family:'Zilla Slab', serif; font-weight:700;
+    position:relative; z-index:1; margin-bottom:14px;
+  }
+  .flow-step h3{font-size:1.02rem; margin-bottom:6px;}
+  .flow-step p{font-size:0.92rem;}
+
+  /* Security seal panel */
+  .security{display:grid; grid-template-columns:0.85fr 1.15fr; gap:48px; align-items:center;}
+  @media (max-width:860px){ .security{grid-template-columns:1fr;} }
+  .security-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:22px;}
+  .security-list li{border-left:3px solid var(--ember); padding-left:18px;}
+  .security-list h3{font-size:1.08rem; margin-bottom:4px;}
+  .security-list p{margin:0; font-size:0.94rem;}
+
+  /* Revenue */
+  .revenue{margin-top:40px; display:flex; flex-direction:column;}
+  .rev-row{
+    display:grid; grid-template-columns:220px 1fr; gap:26px; padding:20px 0; border-top:1px solid var(--line);
+  }
+  .rev-row:last-child{border-bottom:1px solid var(--line);}
+  @media (max-width:640px){ .rev-row{grid-template-columns:1fr; gap:6px;} }
+  .rev-row h3{font-size:1.02rem; margin:0; font-family:'Work Sans',sans-serif; font-weight:600; color:var(--ink);}
+  .rev-row p{margin:0; font-size:0.94rem;}
+
+  /* Roadmap timeline */
+  .roadmap{margin-top:48px; display:grid; grid-template-columns:repeat(3,1fr); gap:30px;}
+  @media (max-width:860px){ .roadmap{grid-template-columns:1fr;} }
+  .phase{
+    border-top:3px solid var(--green); padding-top:16px;
+  }
+  .phase .num{font-family:'Zilla Slab', serif; font-size:0.85rem; color:var(--ink-soft); letter-spacing:0.02em;}
+  .phase h3{font-size:1.2rem; margin:6px 0 10px;}
+  .phase ul{margin:0; padding-left:18px; font-size:0.93rem; color:var(--ink-soft);}
+  .phase li{margin-bottom:6px;}
+
+  /* Final CTA */
+  .final{
+    background:var(--ink); color:var(--bg);
+    border-radius:4px;
+    padding:56px 40px;
+    display:grid; grid-template-columns:1.2fr 1fr; gap:36px; align-items:center;
+  }
+  @media (max-width:860px){ .final{grid-template-columns:1fr; padding:40px 26px;} }
+  .final h2{color:var(--bg); font-size:clamp(1.6rem,3vw,2.1rem);}
+  .final p{color:color-mix(in srgb, var(--bg) 78%, transparent);}
+  .final-form{
+    background:color-mix(in srgb, var(--bg) 8%, transparent);
+    border:1px solid color-mix(in srgb, var(--bg) 28%, transparent);
+    border-radius:3px; padding:22px;
+  }
+  .final-form label{display:block; font-size:0.85rem; margin-bottom:6px; color:color-mix(in srgb, var(--bg) 80%, transparent);}
+  .final-form input, .final-form select{
+    width:100%; padding:11px 12px; margin-bottom:14px; border-radius:2px;
+    border:1px solid color-mix(in srgb, var(--bg) 30%, transparent);
+    background:color-mix(in srgb, var(--bg) 6%, transparent); color:var(--bg); font-family:'Work Sans',sans-serif;
+  }
+  .final-form button{
+    width:100%; padding:12px; border:none; border-radius:2px; background:var(--ember); color:#F4ECD8; font-weight:500; cursor:pointer;
+  }
+  .demo-note{font-size:0.78rem; margin-top:10px; color:color-mix(in srgb, var(--bg) 60%, transparent);}
+
+  footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line);}
+  .foot-row{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; font-size:0.85rem; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M4 22 Q16 6 28 22" stroke="var(--ember)" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="16" cy="10" r="3.2" fill="var(--gold)"/></svg>
+      MercadoLlanero
+    </div>
+    <div class="navlinks">
+      <a href="#modulos">Módulos</a>
+      <a href="#tienda">Tienda de insumos</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#seguridad">Seguridad</a>
+      <a href="#inversionistas">Para inversionistas</a>
+    </div>
+    <a class="nav-cta" href="#unirse">Unirme</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <h1 class="mark">El campo vende directo al campo</h1>
+      <p class="lede">MercadoLlanero conecta a productores, ganaderos, distribuidores de insumos y transportistas del sector agropecuario en una plaza verificada, sin intermediarios que se queden con el margen del trato.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#unirse">Publicar mi primer lote</a>
+        <a class="btn btn-secondary" href="#como-funciona">Ver cómo funciona</a>
+      </div>
+    </div>
+    <svg class="hero-scene" viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--bg-alt)"/>
+          <stop offset="100%" stop-color="var(--bg)"/>
+        </linearGradient>
+      </defs>
+      <rect width="480" height="360" fill="url(#sky)"/>
+      <circle cx="380" cy="90" r="46" fill="var(--gold)" opacity="0.85"/>
+      <path d="M0 230 Q120 200 240 224 T480 210 V360 H0 Z" fill="var(--green)" opacity="0.28"/>
+      <path d="M0 260 Q140 236 260 254 T480 244 V360 H0 Z" fill="var(--green)" opacity="0.45"/>
+      <g fill="var(--ink)" opacity="0.75">
+        <g transform="translate(70,232) scale(0.9)">
+          <ellipse cx="20" cy="18" rx="20" ry="10"/><rect x="4" y="6" width="14" height="12" rx="3"/><rect x="0" y="16" width="4" height="10"/><rect x="10" y="16" width="4" height="10"/><rect x="26" y="16" width="4" height="10"/><rect x="34" y="16" width="4" height="10"/>
+        </g>
+        <g transform="translate(150,244) scale(0.7)">
+          <ellipse cx="20" cy="18" rx="20" ry="10"/><rect x="4" y="6" width="14" height="12" rx="3"/><rect x="0" y="16" width="4" height="10"/><rect x="10" y="16" width="4" height="10"/><rect x="26" y="16" width="4" height="10"/><rect x="34" y="16" width="4" height="10"/>
+        </g>
+        <g transform="translate(230,238) scale(0.55)">
+          <ellipse cx="20" cy="18" rx="20" ry="10"/><rect x="4" y="6" width="14" height="12" rx="3"/><rect x="0" y="16" width="4" height="10"/><rect x="10" y="16" width="4" height="10"/><rect x="26" y="16" width="4" height="10"/><rect x="34" y="16" width="4" height="10"/>
+        </g>
+      </g>
+      <rect y="330" width="480" height="30" fill="var(--bg)"/>
+    </svg>
+  </section>
+
+  <section class="wrap">
+    <div class="pillars">
+      <div class="pillar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 4 L20 20 M4 20 L20 4" stroke="var(--ember)" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="var(--ink-soft)" stroke-width="1.2"/></svg>
+        <h3>Trato directo</h3>
+        <p>El comprador paga al vendedor por el medio que ya usan en el llano — Pago Móvil, transferencia, Zelle o USDT. MercadoLlanero no retiene el dinero; ordena el proceso y respalda la operación.</p>
+      </div>
+      <div class="pillar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 6.5 V12 C20 17 16.5 20.5 12 21.5 C7.5 20.5 4 17 4 12 V6.5 Z" stroke="var(--green)" stroke-width="1.6"/></svg>
+        <h3>Verificación real</h3>
+        <p>Identidad, predio, código de hierro y guías sanitarias antes de publicar. Cada perfil verificado lleva su historial de operaciones a la vista.</p>
+      </div>
+      <div class="pillar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 V21 M6 7 H18 M4 7 L2 13 H8 L6 7 Z M20 7 L18 13 H24 L20 7 Z" transform="translate(-1,0)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <h3>Respaldo en cada operación</h3>
+        <p>Fianza o fiador local en lotes de alto valor, más una mesa de arbitraje si algo no coincide con lo publicado. El riesgo deja de ser solo del comprador.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="modulos" class="section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Cuatro rubros, una sola plaza</h2>
+        <p>Del corral al taller: cada rubro tiene su propia ficha y sus propios requisitos de verificación.</p>
+      </div>
+      <div class="modules">
+        <div class="module-feature">
+          <div>
+            <h3 style="font-size:1.5rem;">Ganadería</h3>
+            <p>Bovinos, equinos, ovinos, porcinos y genética. Venta a precio fijo o subasta programada, con ficha técnica obligatoria: código de hierro, guías sanitarias, peso y esquema de vacunación.</p>
+            <div class="tag-row">
+              <span class="tag">Venta directa</span>
+              <span class="tag">Subasta programada</span>
+              <span class="tag">Genética / semen</span>
+            </div>
+          </div>
+          <div class="ficha">
+            <svg class="seal" viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="none" stroke="var(--ember)" stroke-width="2"/><path d="M18 30 L27 39 L42 21" stroke="var(--ember)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="ficha-top">
+              <div><div class="id">Lote BR-1042</div><div class="lot">Brahman comercial · Finca Los Morichales</div></div>
+            </div>
+            <dl>
+              <dt>Código de hierro</dt><dd>ML · 07 · BR</dd>
+              <dt>Raza / edad</dt><dd>Brahman, 24 meses</dd>
+              <dt>Peso promedio</dt><dd>420 kg (con desbaste)</dd>
+              <dt>Guía sanitaria</dt><dd>Vigente — SICA</dd>
+              <dt>Vacunación</dt><dd>Aftosa, Brucelosis</dd>
+              <dt>Modalidad</dt><dd>Precio fijo, USD</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="module-side">
+          <div class="module-mini">
+            <h3>Agroinsumos</h3>
+            <p>Semillas, fertilizantes, concentrados y medicina veterinaria. Distribuidores autorizados con licencia sanitaria y comercial validada.</p>
+          </div>
+          <div class="module-mini">
+            <h3>Maquinaria y herramientas</h3>
+            <p>Tractores, implementos, riego y tecnología de campo. Equipos nuevos y usados, más un módulo de alquiler por temporada.</p>
+          </div>
+          <div class="module-mini">
+            <h3>Servicios y logística</h3>
+            <p>Veterinarios, ingenieros agrónomos y transporte especializado de ganado, con guía sanitaria incluida en cada traslado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tienda">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Tienda de agroinsumos</h2>
+        <p>Los distribuidores autorizados publican su catálogo con precio fijo y despacho coordinado. Semillas, fertilizantes, concentrados y medicina veterinaria, con licencia validada antes de aparecer en la tienda.</p>
+      </div>
+      <div class="shop-tabs">
+        <span class="shop-tab is-active">Todo</span>
+        <span class="shop-tab">Semillas</span>
+        <span class="shop-tab">Fertilizantes</span>
+        <span class="shop-tab">Alimento concentrado</span>
+        <span class="shop-tab">Medicina veterinaria</span>
+      </div>
+      <div class="shop-grid">
+        <div class="product">
+          <div class="cat">Fertilizantes</div>
+          <h3>Fertilizante NPK 20-20-20, saco 50 kg</h3>
+          <div class="seller">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="var(--green)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Insumos San Rafael · distribuidor verificado
+          </div>
+          <div class="price-row"><span class="price">$28</span><span class="unit">por saco</span></div>
+          <button class="add-btn" type="button" onclick="this.textContent='En el carrito'; this.disabled=true;">Agregar</button>
+        </div>
+        <div class="product">
+          <div class="cat">Semillas</div>
+          <h3>Semilla híbrida de maíz, bolsa 25 kg</h3>
+          <div class="seller">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="var(--green)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Semillas del Llano · distribuidor verificado
+          </div>
+          <div class="price-row"><span class="price">$64</span><span class="unit">por bolsa</span></div>
+          <button class="add-btn" type="button" onclick="this.textContent='En el carrito'; this.disabled=true;">Agregar</button>
+        </div>
+        <div class="product">
+          <div class="cat">Alimento concentrado</div>
+          <h3>Concentrado de engorde bovino 40%, saco 40 kg</h3>
+          <div class="seller">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="var(--green)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Nutrial C.A. · distribuidor verificado
+          </div>
+          <div class="price-row"><span class="price">$19</span><span class="unit">por saco</span></div>
+          <button class="add-btn" type="button" onclick="this.textContent='En el carrito'; this.disabled=true;">Agregar</button>
+        </div>
+        <div class="product">
+          <div class="cat">Medicina veterinaria</div>
+          <h3>Vacuna triple bovina, frasco 50 dosis</h3>
+          <div class="seller">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L10 18 L20 6" stroke="var(--green)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            VetLlano · distribuidor verificado
+          </div>
+          <div class="price-row"><span class="price">$76</span><span class="unit">por frasco</span></div>
+          <div class="lic">Requiere licencia sanitaria validada del comprador</div>
+          <button class="add-btn" type="button" onclick="this.textContent='En el carrito'; this.disabled=true;">Agregar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Cómo se cierra un trato</h2>
+        <p>Cinco pasos, del anuncio al embarque. El dinero se mueve entre las partes; MercadoLlanero ordena, verifica y respalda.</p>
+      </div>
+      <div class="flow">
+        <div class="flow-line">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <h3>Publicación y fianza</h3>
+            <p>El vendedor publica su lote con ficha completa. En lotes de alto valor, aporta fianza o fiador verificado.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <h3>Reserva y bloqueo</h3>
+            <p>El comprador reserva el lote, que queda bloqueado entre 4 y 48 horas mientras se coordina el trato.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <h3>Pago directo P2P</h3>
+            <p>El pago va del comprador al vendedor por Pago Móvil, transferencia, Zelle o USDT. El comprobante se adjunta en el chat.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <h3>Verificación e inspección</h3>
+            <p>Se confirma el pago y se coordina pesaje, revisión de salud o del equipo, y el embarque.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">5</div>
+            <h3>Cierre de orden</h3>
+            <p>Ambas partes confirman conformidad, se liberan las fianzas y queda registrada la reputación de cada parte.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="seguridad">
+    <div class="wrap security">
+      <div>
+        <svg viewBox="0 0 140 140" width="100%" style="max-width:220px;">
+          <circle cx="70" cy="70" r="62" fill="none" stroke="var(--ember)" stroke-width="2"/>
+          <circle cx="70" cy="70" r="50" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <path d="M70 30 L82 46 L70 42 L58 46 Z" fill="var(--gold)"/>
+          <path d="M46 78 L64 96 L96 56" stroke="var(--green)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Cuando algo no coincide, hay a quién reclamarle</h2>
+        </div>
+        <ul class="security-list">
+          <li>
+            <h3>Verificación de identidad</h3>
+            <p>Cédula o RIF, documento del predio y código de hierro registrado antes de poder publicar como vendedor.</p>
+          </li>
+          <li>
+            <h3>Fianza y reputación</h3>
+            <p>Los lotes de alto valor exigen garantía propia o un fiador local verificado por la plataforma.</p>
+          </li>
+          <li>
+            <h3>Mesa de arbitraje</h3>
+            <p>Si el ganado no coincide con la ficha o hay una falla no reportada, un perito certificado revisa comprobantes, guías y video del embarque antes de resolver.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="inversionistas" class="section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Para inversionistas</h2>
+        <p>MercadoLlanero no capta el dinero de las operaciones: ordena el trato y cobra por hacerlo posible. Menos exposición regulatoria, ingresos desde el primer módulo activo.</p>
+      </div>
+      <div class="revenue">
+        <div class="rev-row">
+          <h3>Comisión por operación</h3>
+          <p>Tarifa fija o porcentual sobre cada orden P2P concretada a través de la plataforma.</p>
+        </div>
+        <div class="rev-row">
+          <h3>Suscripciones y tiendas oficiales</h3>
+          <p>Planes mensuales o anuales para distribuidores de insumos y casas comerciales con catálogo propio.</p>
+        </div>
+        <div class="rev-row">
+          <h3>Publicaciones destacadas</h3>
+          <p>Visibilidad premium en portada y en resultados de búsqueda para lotes y equipos.</p>
+        </div>
+        <div class="rev-row">
+          <h3>Certificación y peritaje</h3>
+          <p>Margen por conectar cada orden con veterinarios e ingenieros agrónomos validadores en campo.</p>
+        </div>
+      </div>
+
+      <div class="roadmap">
+        <div class="phase">
+          <div class="num">Fase 1</div>
+          <h3>MVP</h3>
+          <ul>
+            <li>Anuncios de ganado e insumos</li>
+            <li>KYC obligatorio</li>
+            <li>Directorio de transportistas</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="num">Fase 2</div>
+          <h3>Motor P2P</h3>
+          <ul>
+            <li>Órdenes P2P con reserva y bloqueo</li>
+            <li>Chat seguro con comprobantes</li>
+            <li>Módulo de fianzas y garantías</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="num">Fase 3</div>
+          <h3>Subastas y offline</h3>
+          <ul>
+            <li>Subastas en vivo</li>
+            <li>Arbitraje avanzado</li>
+            <li>App móvil con soporte offline</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="unirse" class="wrap">
+    <div class="final">
+      <div>
+        <h2>Sé de los primeros en el llano digital</h2>
+        <p>Este es un sitio de demostración para presentar MercadoLlanero a inversionistas y futuros miembros. Deja tus datos y te contactamos cuando abramos el primer cupo.</p>
+      </div>
+      <div class="final-form">
+        <label for="rol">Quiero unirme como</label>
+        <select id="rol">
+          <option>Productor o ganadero</option>
+          <option>Distribuidor de insumos</option>
+          <option>Transportista o servicio</option>
+          <option>Inversionista</option>
+        </select>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" placeholder="Tu nombre">
+        <label for="correo">Correo</label>
+        <input id="correo" type="email" placeholder="tu@correo.com">
+        <button type="button" onclick="this.textContent='Gracias, te contactamos pronto'; this.disabled=true;">Quiero entrar</button>
+        <div class="demo-note">Sitio de demostración — este formulario no envía datos.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>MercadoLlanero — el mercado del llano, sin intermediarios.</div>
+    <div>Sitio simulado con fines de presentación.</div>
+  </div>
+</footer>
+
+</body>
+</html>
